@@ -61,6 +61,3 @@ RUN chown -R appuser:appuser /opt/app
 
 # Switch to the non-root user
 USER appuser
-
-# Define the entrypoint
-# ENTRYPOINT [ "python3", "prediction/main.py" ]

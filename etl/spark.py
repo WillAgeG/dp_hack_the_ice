@@ -8,7 +8,7 @@ def create_spark_session():
     spark = SparkSession.builder \
         .master('local') \
         .appName('myAppName') \
-        .config('spark.executor.memory', '4gb') \
+        .config('spark.executor.memory', '2gb') \
         .config("spark.cores.max", "2") \
         .getOrCreate()
     
