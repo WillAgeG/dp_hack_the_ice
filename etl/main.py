@@ -1,30 +1,18 @@
-from pyspark.sql import SparkSession
-import os
+import logging
 
-from extract import load_data
+from extract.load_data import load_kaggle_data
+from trasform.transform_data import get_products
+from spark import spark
 
-def create_spark_session():
-    # Explicitly set JAVA_HOME (optional if Dockerfile changes work)
-    # os.environ["JAVA_HOME"] = "/usr/lib/jvm/default-java"
 
-    spark = SparkSession.builder \
-        .appName("prediction") \
-        .master("spark://spark-master:7077") \
-        .getOrCreate()
+def main() -> None:
+    logging.info("Старт ETL процесса")
+    load_kaggle_data()
+    get_products()
 
-    print('Spark Created')
-    return spark
 
-def main():
-    spark = create_spark_session()
-    # Example: Create DataFrame from a list
-    data = [("asdasd", 34), ("dsadsa", 45), ("sssss", 29)]
-    columns = ["Name", "Age"]
-    
-    df = spark.createDataFrame(data, schema=columns)
-    df.show()
-    load_data()
     spark.stop()
+    logging.info("Конец ETL процесса")
 
 if __name__ == "__main__":
     main()
