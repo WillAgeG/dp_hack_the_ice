@@ -1,0 +1,61 @@
+services:
+  spark-master:
+    image: bitnami/spark:latest
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8080:8080"  # Spark Master UI
+      - "7077:7077"  # Spark Master port
+    networks:
+      - spark-network
+
+  spark-worker:
+    image: bitnami/spark:latest
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_INSTANCES=1
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"  # Spark Worker UI
+    networks:
+      - spark-network
+
+  prediction-app:
+    build: .
+    container_name: prediction-app
+    depends_on:
+      - spark-master
+    networks:
+      - spark-network
+    volumes:
+      - .:/opt/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    entrypoint: ["python3", "prediction/main.py"]
+
+  etl-app:
+    build: .
+    container_name: etl-app
+    depends_on:
+      - spark-master
+    networks:
+      - spark-network
+    volumes:
+      - .:/opt/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    entrypoint: ["python3", "etl/main.py"]
+
+networks:
+  spark-network:
+    driver: bridge
