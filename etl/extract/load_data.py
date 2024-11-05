@@ -5,6 +5,8 @@ import logging
 
 from spark import spark
 
+from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
+
 schemas = {
     "products": StructType([
         StructField("id", StringType(), True),
