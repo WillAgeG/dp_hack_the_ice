@@ -9,8 +9,7 @@ def main() -> None:
     logging.info("Старт ETL процесса")
     load_kaggle_data()
     get_products()
-
-
+    
     spark.stop()
     logging.info("Конец ETL процесса")
 
